@@ -1,0 +1,130 @@
+import pywinctl as pwc 
+import time
+from Config import AppNames
+def ChangeLoc(window,x,y,w,h):
+    acwindow=window
+    for alias_dict in AppNames:
+        firstname = list(alias_dict.keys())[0] 
+        
+        if firstname == window:
+            acwindow = alias_dict[firstname]  
+            print(f"Match Found! Alias Map: '{window}' -> '{acwindow}'")
+            break
+
+    acwindows = []
+    for _ in range(10):  
+        raw_windows = pwc.getWindowsWithTitle(acwindow, condition=pwc.Re.CONTAINS, flags=pwc.Re.IGNORECASE)
+        acwindows = [w for w in raw_windows if "opening -" not in w.title.lower()]
+        if acwindows:
+            break
+        time.sleep(0.2)
+    if acwindows:
+        target = None
+        for win in acwindows:
+            if win.visible and not win.isMinimized:
+                target = win
+                break
+        if not target:
+            target=acwindows[0]
+        if target.isMinimized:
+            target.restore()
+        if target.isMaximized:
+            target.restore()
+            time.sleep(0.1)
+
+        print("window:",target)
+        try:
+            if target.isMinimized or target.isMaximized:
+                target.restore()
+            
+        # Standard, rapid execution. No middle-of-the-screen jumping.
+            target.resizeTo(w, h)
+            target.moveTo(x, y)
+            print(f"🚀 Positioned {target.title} directly to ({x}, {y})")
+        
+        except Exception as e:
+        # If Word or CMD changes handles mid-air, catch it silently without crashing Jarvis
+            print(f"⚠️ Handled window state transition: {e}")
+    else:
+        print("Nope thats the problem")
+
+def GetWindowLoc(window):
+    target_title = runNameCheck(window)
+    windows = pwc.getWindowsWithTitle(target_title, condition=pwc.Re.CONTAINS, flags=pwc.Re.IGNORECASE)
+    if windows:
+        target=windows[0]
+        x=target.left
+        y=target.top
+        w=target.width
+        h=target.height
+        return x,y,w,h
+
+
+from Config import projects
+
+def UpdateWindowLoc(project,window,x,y,w,h):
+ for project_dict in projects:
+    if project in project_dict:
+        acproject = project_dict[project]
+        for i,item in enumerate(acproject):
+            if isinstance(item,dict) and window in item:
+                current_request=item[window]
+                new_loc=f"loc|{x},{y},{w},{h}"
+                if "loc|" in current_request:
+                    subrequests=current_request.split(';')
+                    updated_subrequests=[]
+                    for req in subrequests:
+                        if req.startswith("loc|"):
+                            updated_subrequests.append(new_loc)
+                        else:
+                            updated_subrequests.append(req)
+                    item[window]= ";".join(updated_subrequests)
+                else:
+                    if current_request:
+                        item[window]=f"{current_request};{new_loc}"
+                    else:
+                        item[window]=new_loc
+        return
+def SaveConfigToFile():
+    with open("Config.py", "w", encoding="utf-8") as file:
+        file.write(f"AppNames = {repr(AppNames)}\n\n")
+        file.write(f"projects = {repr(projects)}\n")
+    print("💾 Workspace settings file configuration saved to Config.py successfully.")
+
+def runNameCheck(name):
+    if not isinstance(name, str):
+        return name
+        
+    for alias_dict in AppNames:
+        if not isinstance(alias_dict, dict):
+            continue
+        firstname = list(alias_dict.keys())[0] 
+        
+        if firstname == name:
+            print(f"Match Found! Alias Map: '{name}' -> '{alias_dict[firstname]}'")
+            return alias_dict[firstname]  
+            
+    return name 
+    
+
+
+
+
+def Collect():
+ while True:
+    project=input(">")
+    if project.lower() == 'exit':
+        break
+    window=input(">")
+    result=GetWindowLoc(window)
+    print(result)
+    if result:
+        x=result[0]
+        y=result[1]
+        w=result[2]
+        h=result[3]
+        UpdateWindowLoc(project,window,x,y,w,h)
+        SaveConfigToFile()
+    else:
+        print("Not Found")
+        
