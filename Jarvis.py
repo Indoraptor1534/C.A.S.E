@@ -1,9 +1,19 @@
 import os
 import numpy as np
 from txtai.embeddings import Embeddings
-embeddings = Embeddings(path="sentence-transformers/all-MiniLM-L6-v2")
 from op import launch_apps,close_apps
 from Config import projects
+os.environ["TRANSFORMERS_OFFLINE"] = "1"
+os.environ["HF_HUB_OFFLINE"] = "1"
+os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
+embeddings = Embeddings(path="local_miniLM_model")
+
+
+if os.path.exists('model_weight.npz'):
+    data=np.load('model_weight.npz',allow_pickle=True)
+    weights1,weights2,weights3=data['w1'],data['w2'],data['w3']
+    biases1,biases2,biases3=data['b1'],data['b2'],data['b3']
+    print("loaded weights and biases")
 
 def sigmoid(x):
   return 1 / (1 + np.exp(-x))
@@ -14,11 +24,6 @@ def relu_derivative(x):
     return (x>0).astype(float)
 
 def ContinueWith(text):
-    if os.path.exists('model_weight.npz'):
-        data=np.load('model_weight.npz',allow_pickle=True)
-        weights1,weights2,weights3=data['w1'],data['w2'],data['w3']
-        biases1,biases2,biases3=data['b1'],data['b2'],data['b3']
-        print("loaded weights and biases")
         text1=text.replace(",","")
 
         test = np.array(embeddings.transform(text1)).flatten()

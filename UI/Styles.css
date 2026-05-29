@@ -1,0 +1,54 @@
+.app_container{
+     background: rgba(0, 0, 0, 0.333);
+     width:100%;
+     height:inherit;
+     display:flex;
+     flex-direction: column;
+     justify-content: flex-start;
+     align-items: center;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000; /* Fallback dark background */
+}
+.type{
+    width:85%;
+    height:50px;
+    background-color: #56565679;
+    border-radius: 20px;
+    backdrop-filter:blur(20px);
+    margin-bottom:5%
+}
+.workstation{
+    height: 100%;
+    width:inherit;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+.inputarea{
+    width:75%;
+    height:inherit;
+    display:flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    background-color: #00000000;
+}
+.settingsarea{
+     width:25%;
+    height:inherit;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    background-color: rgba(63, 63, 63, 0.574);
+}

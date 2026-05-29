@@ -45,7 +45,7 @@ print(f" SYSTEM READY: Press and HOLD [{TRIGGER_KEY.upper()}] to speak your comm
 print("="*60 + "\n")
 
 try:
-    while True:
+    while True: 
         # Wait until the user physically presses the trigger key down
         keyboard.wait(TRIGGER_KEY)
         
