@@ -40,7 +40,6 @@ def ChangeLoc(window,x,y,w,h):
         # Standard, rapid execution. No middle-of-the-screen jumping.
             target.resizeTo(w, h)
             target.moveTo(x, y)
-            print(f"🚀 Positioned {target.title} directly to ({x}, {y})")
         
         except Exception as e:
         # If Word or CMD changes handles mid-air, catch it silently without crashing Jarvis
