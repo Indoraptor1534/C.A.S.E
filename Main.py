@@ -93,7 +93,7 @@ try:
         
         if transcript:
             print(f"-> Transcribed Command: \"{transcript}\"")
-            from Jarvis import ContinueWith
+            from CASE import ContinueWith
             ContinueWith(transcript)
        
 
