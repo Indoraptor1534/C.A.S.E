@@ -102,13 +102,36 @@ def close_apps(target_project):
 
 
 def kill_by_name(target_name):
-    # This looks for any running process that contains your app name
+    from Config import AppNames
+    target_lower=target_name.lower()
+
+    possible_names = {target_lower}
+    
+    for mapping in AppNames:
+        for key, val in mapping.items():
+            if key.lower() == target_lower:
+                possible_names.add(val.lower())
+            elif val.lower() == target_lower:
+                possible_names.add(key.lower())
     for proc in psutil.process_iter(['name']):
         try:
-            # We check if 'whatsapp' is in 'WhatsApp.exe'
-            if target_name.lower() in proc.info['name'].lower():
+            proc_name_lower = proc.info['name'].lower()
+            exe_clean = proc_name_lower.replace('.exe', '')
+            
+            if not exe_clean:
+                continue
+                
+            # Check if ANY of our aliases match the executable, or vice-versa
+            match_found = False
+            for name in possible_names:
+                if name in proc_name_lower or exe_clean in name:
+                    match_found = True
+                    break
+            
+            if match_found:
                 proc.kill()
-                print(f"Killed: {proc.info['name']}")
+                print(f" Force Killed: {proc.info['name']}")
+                
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
 

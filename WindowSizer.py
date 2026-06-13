@@ -109,12 +109,8 @@ def runNameCheck(name):
 
 
 
-def Collect():
- while True:
-    project=input(">")
-    if project.lower() == 'exit':
-        break
-    window=input(">")
+def Collect(project,window):
+    wait=input(f"Open {window} in desired postition and click 'enter'")
     result=GetWindowLoc(window)
     print(result)
     if result:
@@ -126,4 +122,40 @@ def Collect():
         SaveConfigToFile()
     else:
         print("Not Found")
+
+
+def AddAppsorProjects(project,app):
+
+    #Checking if project exists in dict
+    for project_dict in projects:
+        if project in project_dict:
+            acproject=project_dict[project]
+
+            alreadexists=False
+            for item in acproject:
+                if isinstance(item,dict) and app in item:
+                    alreadexists=True
+                    print("Exists")
+                    break
+                if isinstance(item,str) and item==app:
+                    alreadexists=True
+                    print("Exists")
+                    break
+
+            if not alreadexists:
+                new_app_dict={app:""}
+                acproject.append(new_app_dict)
+
+                SaveConfigToFile()
+                print(f"Added App {app} to {project}")
+                Collect(project,app)
+            else:
+                print("Already exists mate")
+        else:
+            print("SomeBugMateReport")
+            return
+        
+
+
+
         
