@@ -83,7 +83,34 @@ def UpdateWindowLoc(project,window,x,y,w,h):
                         item[window]=f"{current_request};{new_loc}"
                     else:
                         item[window]=new_loc
-        return
+
+
+
+def UpdateWindowType(Project,Window,Text):
+         for project_dict in projects:
+            if Project in project_dict:
+                acproject = project_dict[Project]
+                for i,item in enumerate(acproject):
+                    if isinstance(item,dict) and Window in item:
+                        current_request=item[Window]
+                        new_text=f"type|{Text}"
+                        if "type|" in current_request:
+                            subrequests=current_request.split(";")
+                            updated_subrequests=[]
+                            for req in subrequests:
+                                if req.startswith("type|"):
+                                    updated_subrequests.append(new_text)
+                                else:
+                                    updated_subrequests.append(req)
+                            item[Window]=";".join(updated_subrequests)
+                        else:
+                            if current_request:
+                                item[Window]=f"{current_request};{new_text}"
+                            else:
+                                item[Window]=new_text
+
+
+
 def SaveConfigToFile():
     with open("Config.py", "w", encoding="utf-8") as file:
         file.write(f"AppNames = {repr(AppNames)}\n\n")
@@ -110,18 +137,29 @@ def runNameCheck(name):
 
 
 def Collect(project,window):
-    wait=input(f"Open {window} in desired postition and click 'enter'")
-    result=GetWindowLoc(window)
-    print(result)
-    if result:
-        x=result[0]
-        y=result[1]
-        w=result[2]
-        h=result[3]
-        UpdateWindowLoc(project,window,x,y,w,h)
-        SaveConfigToFile()
-    else:
-        print("Not Found")
+    command=input("Do you want to Modify Location or Typing thing?(L for Location and T for the type thing): ").lower()
+    if command=="l":
+        wait=input(f"Open {window} in desired postition and click 'enter'")
+        result=GetWindowLoc(window)
+        print(result)
+        if result:
+            x=result[0]
+            y=result[1]
+            w=result[2]
+            h=result[3]
+            UpdateWindowLoc(project,window,x,y,w,h)
+            SaveConfigToFile()
+        else:
+            print("Not Found")
+    elif command=="t":
+        Text=input("Enter what you want it to type:")
+        if Text:
+            UpdateWindowType(project,window,Text)
+            SaveConfigToFile()
+        else:
+            print("no text found")
+
+
 
 
 def AddAppsorProjects(project,app):
@@ -158,4 +196,37 @@ def AddAppsorProjects(project,app):
 
 
 
-        
+def removeAppsOrProjects(Project,App=None):
+    Project=Project.lower()
+    if App:
+        App=App.lower()
+    for project_dict in projects:
+        if Project in project_dict:
+            if App:
+                original_list=project_dict[Project]
+
+                updated_list=[]
+                app_found=False
+
+                for item in original_list:
+                    if isinstance(item,dict) and App in item:
+                        app_found=True
+                        continue
+                    elif isinstance(item,str) and item==App:
+                        app_found=True
+                        continue
+                    updated_list.append(item)
+                if app_found:
+                    project_dict[Project]=updated_list
+                    SaveConfigToFile()
+                    print(f"Successfully deleted {App} from {Project}")
+                else:
+                    print(f"Failed to find {App} in {Project}")
+                return
+            else:
+                del project_dict[Project]
+                SaveConfigToFile()
+                print(f"Successfully deleted {Project}")
+                return
+    print("Could not find")
+

@@ -19,9 +19,30 @@ if os.path.exists('model_weight.npz'):
     weights1,weights2,weights3=data['w1'],data['w2'],data['w3']
     biases1,biases2,biases3=data['b1'],data['b2'],data['b3']
     print("loaded weights and biases")
+def GetDelete():
+    acProjectForDel=None
+    ProjectName=input("Enter project name to delete: ").lower()
+    for project_dict in projects:
+        if ProjectName in project_dict:
+            acProjectForDel=ProjectName
+    if acProjectForDel:
+        AppName=input("Enter app's name or 'N' if you want to delete the Project: ").lower()
+        if AppName=="n":
+            from WindowSizer import removeAppsOrProjects
+            removeAppsOrProjects(acProjectForDel)
+            return
+        else:
+            from WindowSizer import removeAppsOrProjects
+            removeAppsOrProjects(acProjectForDel,AppName)
 
-acProjectForAdd=None
-while True:
+
+            
+
+
+          
+def GetProject():
+ acProjectForAdd=None
+ while True:
     ProjectName=input("Enter project name: ").lower()
     if ProjectName=="exit":
         print("Exiting")
@@ -41,7 +62,7 @@ while True:
             SaveConfigToFile()
             print(f"Added a new project {ProjectName}")
             acProjectForAdd=ProjectName
-            break
+            return acProjectForAdd
         elif create_new=="n":
             print("Lets try again...")
             continue
@@ -51,9 +72,13 @@ while True:
     else:
         break
 
+ return acProjectForAdd
 
 
-if acProjectForAdd:
+
+
+
+def GetApp(Project):
     while True:
         AppName=input("Enter new app's name: ").lower()
         if AppName=="exit":
@@ -61,8 +86,8 @@ if acProjectForAdd:
             break
         AllAppsInComp=CheckApps()
         if AppName in AllAppsInComp:
-            AddAppsorProjects(acProjectForAdd,AppName)
-            break
+            AddAppsorProjects(Project,AppName)
+            return 1
         else:
             Matches=difflib.get_close_matches(AppName,AllAppsInComp,n=1,cutoff=0.7)
             if Matches:
@@ -72,6 +97,52 @@ if acProjectForAdd:
             else:
                 print("No Luck Finding Your Specified App")
                 continue
+
+
+
+
+
+Thing=input("What do you want to do?(Delete,change text or loc,Add): ").lower()
+if Thing=="delete":
+    GetDelete()
+elif Thing=="change text or loc":
+    acProjectForAdd=None
+    ProjectName=input("Enter Project Name:").lower()
+    for project_dict in projects:
+        if ProjectName in project_dict:
+            acProjectForAdd=ProjectName
+            break
+    if acProjectForAdd:
+        while True:
+            AppName=input("Enter new app's name: ").lower()
+            if AppName=="exit":
+                print("Exiting")
+                break
+            AllAppsInComp=CheckApps()
+            if AppName in AllAppsInComp:
+                if AppName=="command prompt":
+                    Appname="cmd"
+                from WindowSizer import Collect
+                Collect(acProjectForAdd,AppName)
+                break
+            else:
+                Matches=difflib.get_close_matches(AppName,AllAppsInComp,n=1,cutoff=0.7)
+                if Matches:
+                    print (f"Perhaps You Meant {Matches[0]}?")
+                    continue
+                    
+                else:
+                    print("No Luck Finding Your Specified App")
+                    continue
+elif Thing=="add":
+    GetProject()
+
+
+
+
+
+
+
 
 
                     
@@ -103,4 +174,3 @@ while run==1:
     except KeyboardInterrupt:
         print("Yipee")
 
-      
