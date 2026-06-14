@@ -120,8 +120,13 @@ elif Thing=="change text or loc":
                 break
             AllAppsInComp=CheckApps()
             if AppName in AllAppsInComp:
-                if AppName=="command prompt":
-                    Appname="cmd"
+                from Config import AppNames
+                for alias_dict in AppNames:
+                    for short_key, long_name in alias_dict.items():
+                         if AppName == long_name.lower():
+                            AppName = short_key  # Converts "command prompt" -> "cmd"
+                            break
+
                 from WindowSizer import Collect
                 Collect(acProjectForAdd,AppName)
                 break
