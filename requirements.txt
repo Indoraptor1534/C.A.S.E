@@ -1,0 +1,12 @@
+appopener==1.7
+faster_whisper==1.2.1
+keyboard==0.13.5
+numpy==2.4.6
+pandas==3.0.3
+psutil==7.2.2
+PyAudio==0.2.14
+pyautogui==0.9.54
+pywebview==6.2.1
+PyWinCtl==0.4.1
+transformers==5.9.0
+txtai==9.9.0

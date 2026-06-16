@@ -115,7 +115,7 @@ def SaveConfigToFile():
     with open("Config.py", "w", encoding="utf-8") as file:
         file.write(f"AppNames = {repr(AppNames)}\n\n")
         file.write(f"projects = {repr(projects)}\n")
-    print("💾 Workspace settings file configuration saved to Config.py successfully.")
+    print("Saved Successfully")
 
 def runNameCheck(name):
     if not isinstance(name, str):
@@ -137,7 +137,7 @@ def runNameCheck(name):
 
 
 def Collect(project,window):
-    command=input("Do you want to Modify Location or Typing thing?(L for Location and T for the type thing): ").lower()
+    command=input("Do you want to Modify Location or Typing thing?(L for Location and T for the type thing or N if No): ").lower()
     if command=="l":
         wait=input(f"Open {window} in desired postition and click 'enter'")
         result=GetWindowLoc(window)
@@ -158,6 +158,8 @@ def Collect(project,window):
             SaveConfigToFile()
         else:
             print("no text found")
+    elif command=="n":
+        return
 
 
 

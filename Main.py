@@ -2,7 +2,6 @@
 from txtai.embeddings import Embeddings
 import numpy as np
 import os
-import pandas
 import time
 import difflib
 from Config import projects
@@ -13,6 +12,7 @@ os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_HUB_OFFLINE"] = "1"
 os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
 embeddings = Embeddings(path="local_miniLM_model")
+acProjectForAdd=None
 
 if os.path.exists('model_weight.npz'):
     data=np.load('model_weight.npz',allow_pickle=True)
@@ -62,7 +62,8 @@ def GetProject():
             SaveConfigToFile()
             print(f"Added a new project {ProjectName}")
             acProjectForAdd=ProjectName
-            return acProjectForAdd
+            GetApp(acProjectForAdd)
+            break
         elif create_new=="n":
             print("Lets try again...")
             continue
